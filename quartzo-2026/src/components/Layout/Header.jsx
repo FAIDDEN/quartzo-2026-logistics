@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { LogIn, LogOut, Download, Upload, X, User, Bell, AlertCircle, AlertTriangle, Info, Sparkles } from 'lucide-react'
+import { LogIn, LogOut, Download, Upload, X, User, Bell, AlertCircle, AlertTriangle, Info, Eye, EyeOff } from 'lucide-react'
 import { useStore } from '../../store'
 import { useI18n } from '../../i18n'
 
@@ -17,6 +17,7 @@ export default function Header() {
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPass,  setLoginPass]  = useState('')
   const [loginErr,   setLoginErr]   = useState('')
+  const [showPass,   setShowPass]   = useState(false)
   const [importing,  setImporting]  = useState(false)
   const [importMsg,  setImportMsg]  = useState(null)
   const fileRef = useRef()
@@ -178,9 +179,22 @@ export default function Header() {
               </div>
               <div>
                 <label className="label">Senha</label>
-                <input type="password" required value={loginPass}
-                  onChange={e => setLoginPass(e.target.value)}
-                  className="input text-base" placeholder="••••••••" />
+                <div className="relative">
+                  <input
+                    type={showPass ? 'text' : 'password'}
+                    required value={loginPass}
+                    onChange={e => setLoginPass(e.target.value)}
+                    className="input text-base pr-11"
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass(!showPass)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-earth-stone hover:text-earth-cream p-1"
+                  >
+                    {showPass ? <EyeOff size={18}/> : <Eye size={18}/>}
+                  </button>
+                </div>
               </div>
               {loginErr && <p className="text-earth-terra text-sm font-semibold">{loginErr}</p>}
               <button type="submit" className="btn-primary w-full text-base py-3">Entrar</button>

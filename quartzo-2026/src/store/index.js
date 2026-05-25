@@ -108,6 +108,40 @@ const useStore = create(
       },
       logout() { set({ currentUser: null }) },
 
+      // ── user management (super-admin only) ────────────────────────────────
+      SUPER_ADMIN_EMAIL: 'aiddenmusic@gmail.com',
+
+      addUser(data) {
+        const exists = get().users.find(u => u.email === data.email)
+        if (exists) return { error: 'Email já cadastrado.' }
+        const user = { id: uuid(), ...data, createdAt: new Date().toISOString() }
+        set(s => ({ users: [...s.users, user] }))
+        return { ok: true }
+      },
+
+      updateUser(id, data) {
+        set(s => ({
+          users: s.users.map(u => u.id === id ? { ...u, ...data } : u),
+          // if updating own user, keep currentUser in sync
+          currentUser: s.currentUser?.id === id ? { ...s.currentUser, ...data } : s.currentUser,
+        }))
+      },
+
+      deleteUser(id) {
+        set(s => ({ users: s.users.filter(u => u.id !== id) }))
+      },
+
+      changePassword(currentPass, newPass) {
+        const u = get().currentUser
+        if (!u) return { error: 'Não autenticado.' }
+        const stored = get().users.find(x => x.id === u.id)
+        if (stored?.password !== currentPass) return { error: 'Senha atual incorreta.' }
+        get().updateUser(u.id, { password: newPass })
+        return { ok: true }
+      },
+
+
+
       // ── data ──────────────────────────────────────────────────────────────
       artists:           INITIAL_ARTISTS.map(normalizeArtist),
       hotels:            INITIAL_HOTEL_ROOMS,
