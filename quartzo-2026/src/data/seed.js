@@ -481,6 +481,5 @@ export const INITIAL_TRANSFERS_AERO   = []
 export const INITIAL_TRANSFERS_INTERNO = []
 
 export const DEFAULT_USERS = [
-  { id:'u1', name:'Admin', email:'admin@quartzo.com', password:'quartzo2026', role:'admin' },
-  { id:'u2', name:'Motorista', email:'motorista@quartzo.com', password:'motor2026', role:'readonly' },
+  { id:'u1', name:'Aidden', email:'aiddenmusic@gmail.com', password:'@Q!uartzo2026', role:'admin' },
 ]

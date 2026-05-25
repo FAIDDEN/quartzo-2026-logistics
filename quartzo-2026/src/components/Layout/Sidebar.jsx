@@ -26,9 +26,8 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
 
   return (
-    <aside
-      className={`flex flex-col bg-q-900 border-r border-q-750 transition-all duration-300 ${collapsed ? 'w-14' : 'w-48'} min-h-screen`}
-    >
+    <aside className={`flex flex-col bg-q-900 border-r border-q-750 transition-all duration-300 ${collapsed ? 'w-14' : 'w-48'} min-h-screen shrink-0`}>
+
       {/* Logo */}
       <div className={`flex items-center gap-3 px-3 py-4 border-b border-q-750 ${collapsed ? 'justify-center' : ''}`}>
         <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 shrink-0">
@@ -43,21 +42,16 @@ export default function Sidebar() {
         )}
       </div>
 
-      {/* Nav items */}
+      {/* Nav */}
       <nav className="flex-1 py-3 space-y-0.5 px-1.5">
         {NAV.map(({ id, icon: Icon }) => {
           const active = page === id
           return (
-            <button
-              key={id}
-              onClick={() => setPage(id)}
+            <button key={id} onClick={() => setPage(id)}
               title={collapsed ? t(id) : undefined}
               className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-lg text-xs font-medium transition-all
-                ${active
-                  ? 'bg-q-750 text-q-300 '
-                  : 'text-earth-stone hover:text-earth-cream hover:bg-q-800'
-                } ${collapsed ? 'justify-center' : ''}`}
-            >
+                ${active ? 'bg-q-750 text-q-300' : 'text-earth-stone hover:text-earth-cream hover:bg-q-800'}
+                ${collapsed ? 'justify-center' : ''}`}>
               <Icon size={16} className="shrink-0" />
               {!collapsed && <span>{t(id)}</span>}
             </button>
@@ -65,43 +59,27 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Bottom section */}
+      {/* Bottom */}
       <div className="border-t border-q-750 p-2 space-y-1">
-        {/* Language toggle */}
-        <button
-          onClick={() => setLang(lang === 'pt' ? 'en' : 'pt')}
-          title={collapsed ? (lang === 'pt' ? 'EN' : 'PT') : undefined}
-          className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-earth-stone hover:text-earth-cream hover:bg-q-800 transition-all ${collapsed ? 'justify-center' : ''}`}
-        >
+        {/* Language */}
+        <button onClick={() => setLang(lang === 'pt' ? 'en' : 'pt')}
+          className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-earth-stone hover:text-earth-cream hover:bg-q-800 transition-all ${collapsed ? 'justify-center' : ''}`}>
           <Globe size={14} className="shrink-0" />
           {!collapsed && <span>{lang === 'pt' ? 'English' : 'Português'}</span>}
         </button>
 
-        {/* User role badge */}
-        {!collapsed && currentUser && (
-          <div className="px-2.5 py-1.5">
-            <div className="text-[10px] text-earth-stone">{currentUser.name}</div>
-            <div className={`text-[9px] mt-0.5 uppercase tracking-wider font-medium ${currentUser.role === 'admin' ? 'text-q-300' : 'text-earth-stone'}`}>
-              {currentUser.role}
-            </div>
-          </div>
+        {/* Logout — só se estiver logado */}
+        {currentUser && (
+          <button onClick={logout}
+            className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-earth-stone hover:text-earth-terra hover:bg-q-800 transition-all ${collapsed ? 'justify-center' : ''}`}>
+            <LogOut size={14} className="shrink-0" />
+            {!collapsed && <span>{t('logout')}</span>}
+          </button>
         )}
 
-        {/* Logout */}
-        <button
-          onClick={logout}
-          title={collapsed ? t('logout') : undefined}
-          className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-earth-stone hover:text-earth-terra hover:bg-q-800 transition-all ${collapsed ? 'justify-center' : ''}`}
-        >
-          <LogOut size={14} className="shrink-0" />
-          {!collapsed && <span>{t('logout')}</span>}
-        </button>
-
         {/* Collapse toggle */}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-earth-stone hover:text-earth-cream hover:bg-q-800 transition-all ${collapsed ? 'justify-center' : ''}`}
-        >
+        <button onClick={() => setCollapsed(!collapsed)}
+          className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-earth-stone hover:text-earth-cream hover:bg-q-800 transition-all ${collapsed ? 'justify-center' : ''}`}>
           {collapsed ? <ChevronRight size={14} /> : <><ChevronLeft size={14} /><span className="text-[10px]">{t('collapse')}</span></>}
         </button>
       </div>
