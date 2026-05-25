@@ -66,7 +66,7 @@ function FlightSection({ flights, direction, lang, alerts, artistId }) {
 }
 
 export default function ArtistModal({ open, onClose, artist }) {
-  const { lang, updateArtist, addIncident, currentUser, alerts } = useStore(s => ({
+  const { lang, updateArtist, addIncident, currentUser } = useStore(s => ({
     lang: s.lang, updateArtist: s.updateArtist,
     addIncident: s.addIncident, currentUser: s.currentUser,
   }))
