@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background-color: #0D0A05;
+    color: #F0E8D0;
+    min-height: 100vh;
+  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #1A1408; }
+  ::-webkit-scrollbar-thumb { background: #3D3020; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #C8973A; }
+}
+
+@layer components {
+  .card {
+    @apply bg-q-800 border border-q-700 rounded-xl;
+  }
+  .card-hover {
+    @apply card transition-all duration-200 hover:border-q-300 hover:shadow-lg hover:shadow-q-300/10;
+  }
+  .btn-primary {
+    @apply bg-q-300 text-q-950 font-semibold px-4 py-2 rounded-lg hover:bg-q-200 transition-colors;
+  }
+  .btn-secondary {
+    @apply bg-q-700 text-earth-cream px-4 py-2 rounded-lg hover:bg-q-600 transition-colors border border-q-600;
+  }
+  .btn-ghost {
+    @apply text-earth-sand px-3 py-2 rounded-lg hover:bg-q-800 hover:text-earth-cream transition-colors;
+  }
+  .input {
+    @apply bg-q-900 border border-q-700 rounded-lg px-3 py-2 text-earth-cream placeholder-earth-stone focus:outline-none focus:border-q-300 transition-colors w-full;
+  }
+  .label {
+    @apply text-earth-stone text-xs font-medium uppercase tracking-wider mb-1 block;
+  }
+  .badge-ok      { @apply bg-earth-sage/20 text-earth-sage border border-earth-sage/30 text-xs px-2 py-0.5 rounded-full; }
+  .badge-warn    { @apply bg-earth-amber/20 text-earth-amber border border-earth-amber/30 text-xs px-2 py-0.5 rounded-full; }
+  .badge-danger  { @apply bg-earth-terra/20 text-earth-terra border border-earth-terra/30 text-xs px-2 py-0.5 rounded-full; }
+  .badge-pending { @apply bg-q-700 text-earth-stone border border-q-600 text-xs px-2 py-0.5 rounded-full; }
+  .badge-intl    { @apply bg-purple-900/30 text-purple-300 border border-purple-700/30 text-xs px-2 py-0.5 rounded-full; }
+}
