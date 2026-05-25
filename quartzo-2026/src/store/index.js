@@ -5,6 +5,7 @@ import { INITIAL_ARTISTS, INITIAL_HOTEL_ROOMS, INITIAL_DRIVERS,
   INITIAL_TRANSFERS_AERO, INITIAL_TRANSFERS_INTERNO, DEFAULT_USERS } from '../data/seed'
 import { runAllAlerts } from '../utils/alertEngine'
 import { parseExcelFile } from '../utils/excelParser'
+import { exportToExcel } from '../utils/excelExporter'
 
 const AI_ENDPOINT = '/.netlify/functions/claude'
 
@@ -34,6 +35,64 @@ function buildContext(state) {
 }
 
 // ─── store ────────────────────────────────────────────────────────────────────
+
+// ─── data normalizer (bridges seed format → component format) ────────────────
+function fmtDate(d) {
+  // '2026-06-04' → '04/06', already '04/06' passes through
+  if (!d) return ''
+  if (d.includes('-')) {
+    const parts = d.split('-')
+    return `${parts[2]}/${parts[1]}`
+  }
+  return d
+}
+
+function normalizeArtist(a) {
+  return {
+    ...a,
+    // hotel: object → flat string + room field
+    hotel: a.hotel ? (typeof a.hotel === 'string' ? a.hotel : a.hotel.name) : '',
+    room:  a.hotel && typeof a.hotel === 'object' ? a.hotel.room : (a.room || ''),
+    hotelDates: a.hotel && typeof a.hotel === 'object'
+      ? `${fmtDate(a.hotel.checkIn)} → ${fmtDate(a.hotel.checkOut)}`
+      : (a.hotelDates || ''),
+    // sets: normalize day format and time
+    sets: (a.sets || []).map(s => ({
+      ...s,
+      day:   fmtDate(s.day || s.date || ''),
+      stage: s.stage || '',
+      time:  s.time || (s.startTime && s.endTime ? `${s.startTime}–${s.endTime}` : s.startTime || ''),
+      logisticsType: s.logisticsType || '',
+    })),
+    // flightsIn: normalize field names
+    flightsIn: (a.flightsIn || []).map(f => ({
+      ...f,
+      flightNo:  f.flightNo  || f.flightNumber || f.flight || '',
+      from:      f.from      || f.origin       || f.departure_airport || '',
+      to:        f.to        || f.destination  || f.arrival_airport   || '',
+      departure: f.departure || f.departureTime || f.dep_time || '',
+      arrival:   f.arrival   || f.arrivalTime   || f.arr_time || '',
+      date:      fmtDate(f.date || ''),
+    })),
+    flightsOut: (a.flightsOut || []).map(f => ({
+      ...f,
+      flightNo:  f.flightNo  || f.flightNumber || f.flight || '',
+      from:      f.from      || f.origin       || '',
+      to:        f.to        || f.destination  || '',
+      departure: f.departure || f.departureTime || '',
+      arrival:   f.arrival   || f.arrivalTime   || '',
+      date:      fmtDate(f.date || ''),
+    })),
+    // language
+    language: a.language || (a.languages ? a.languages[0] : '') || '',
+    // ensure arrays exist
+    incidents: a.incidents || [],
+    transfersAero:    a.transfersAero    || a.transfersIn  || [],
+    transfersInterno: a.transfersInterno || a.transfersOut || [],
+    checks: a.checks || {},
+  }
+}
+
 const useStore = create(
   persist(
     (set, get) => ({
@@ -50,7 +109,7 @@ const useStore = create(
       logout() { set({ currentUser: null }) },
 
       // ── data ──────────────────────────────────────────────────────────────
-      artists:           INITIAL_ARTISTS,
+      artists:           INITIAL_ARTISTS.map(normalizeArtist),
       hotels:            INITIAL_HOTEL_ROOMS,
       drivers:           INITIAL_DRIVERS,
       transfersAero:     INITIAL_TRANSFERS_AERO,
@@ -253,6 +312,21 @@ const useStore = create(
         set({ importResult: null })
       },
 
+
+      // ── importExcel (called from UI components) ───────────────────────────
+      async importExcel(file) {
+        const buf = await file.arrayBuffer()
+        const result = await get().processImport(buf)
+        get().applyImport(false)
+        return { added: result.newItems?.length || 0, conflicts: result.conflicts || [] }
+      },
+
+      // ── exportExcel (called from UI components) ───────────────────────────
+      exportExcel() {
+        const { artists, hotels, transfersAero, transfersInterno } = get()
+        exportToExcel(artists, hotels, transfersAero, transfersInterno)
+      },
+
       clearImportResult() { set({ importResult: null }) },
 
       // ── AI ────────────────────────────────────────────────────────────────
@@ -294,6 +368,12 @@ const useStore = create(
     }),
     {
       name: 'quartzo-2026-store',
+      onRehydrateStorage: () => (state) => {
+        // Normalize artists that were stored in old format
+        if (state?.artists) {
+          state.artists = state.artists.map(normalizeArtist)
+        }
+      },
       partialize: s => ({
         currentUser: s.currentUser, users: s.users,
         artists: s.artists, hotels: s.hotels, drivers: s.drivers,

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Modal from '../UI/Modal'
+import ArtistForm from './ArtistForm'
 import {
   Plane, Hotel, Car, Globe, MessageCircle, AlertTriangle, AlertCircle,
   CheckCircle2, Circle, Plus, Trash2, Save, Edit3, FileText
@@ -75,6 +76,7 @@ export default function ArtistModal({ open, onClose, artist }) {
   const isAdmin = currentUser?.role === 'admin'
 
   const [tab, setTab] = useState('info')
+  const [editOpen, setEditOpen] = useState(false)
   const [incidentText, setIncidentText] = useState('')
   const [editNotes, setEditNotes] = useState(false)
   const [notes, setNotes] = useState(artist.notes || '')
@@ -130,6 +132,18 @@ export default function ArtistModal({ open, onClose, artist }) {
               {a.message}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Edit button — admin only */}
+      {isAdmin && (
+        <div className="flex justify-end mb-3">
+          <button
+            onClick={() => setEditOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-q-750 hover:bg-q-700 border border-q-500 text-q-300 text-xs font-bold rounded-xl transition-all"
+          >
+            ✏️ Editar artista
+          </button>
         </div>
       )}
 
@@ -412,6 +426,8 @@ export default function ArtistModal({ open, onClose, artist }) {
           )}
         </div>
       )}
+      {/* Edit form */}
+      <ArtistForm open={editOpen} onClose={() => setEditOpen(false)} artist={artist}/>
     </Modal>
   )
 }
