@@ -6,41 +6,74 @@
   * { box-sizing: border-box; }
   body {
     font-family: 'Outfit', sans-serif;
+    font-weight: 400;
     background-color: #0D0A05;
     color: #F0E8D0;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
+  h1, h2, h3 { font-weight: 600; letter-spacing: 0.01em; }
+  p, span, div { font-weight: 400; }
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: #1A1408; }
-  ::-webkit-scrollbar-thumb { background: #3D3020; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: #5C4830; border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: #C8973A; }
 }
 
 @layer components {
+  /* ── Cards ── */
   .card {
-    @apply bg-q-800 border border-q-700 rounded-xl;
+    @apply bg-q-850 border border-q-700 rounded-xl p-4;
   }
   .card-hover {
-    @apply card transition-all duration-200 hover:border-q-300 hover:shadow-lg hover:shadow-q-300/10;
+    @apply card transition-all duration-200 hover:border-q-400 hover:shadow-xl hover:shadow-q-950/80 cursor-pointer;
   }
+
+  /* ── Buttons ── */
   .btn-primary {
-    @apply bg-q-300 text-q-950 font-semibold px-4 py-2 rounded-lg hover:bg-q-200 transition-colors;
+    @apply bg-q-300 text-q-950 font-bold px-4 py-2 rounded-lg hover:bg-q-200 transition-colors text-sm tracking-wide;
   }
   .btn-secondary {
-    @apply bg-q-700 text-earth-cream px-4 py-2 rounded-lg hover:bg-q-600 transition-colors border border-q-600;
+    @apply bg-q-750 text-earth-cream px-4 py-2 rounded-lg hover:bg-q-700 transition-colors border border-q-600 font-medium text-sm;
   }
   .btn-ghost {
     @apply text-earth-sand px-3 py-2 rounded-lg hover:bg-q-800 hover:text-earth-cream transition-colors;
   }
+
+  /* ── Form ── */
   .input {
-    @apply bg-q-900 border border-q-700 rounded-lg px-3 py-2 text-earth-cream placeholder-earth-stone focus:outline-none focus:border-q-300 transition-colors w-full;
+    @apply bg-q-900 border border-q-700 rounded-lg px-3 py-2 text-earth-cream font-medium
+           placeholder-earth-stone/50 focus:outline-none focus:border-q-300 transition-colors w-full text-sm;
   }
   .label {
-    @apply text-earth-stone text-xs font-medium uppercase tracking-wider mb-1 block;
+    @apply text-earth-stone text-[11px] font-semibold uppercase tracking-widest mb-1 block;
   }
-  .badge-ok      { @apply bg-earth-sage/20 text-earth-sage border border-earth-sage/30 text-xs px-2 py-0.5 rounded-full; }
-  .badge-warn    { @apply bg-earth-amber/20 text-earth-amber border border-earth-amber/30 text-xs px-2 py-0.5 rounded-full; }
-  .badge-danger  { @apply bg-earth-terra/20 text-earth-terra border border-earth-terra/30 text-xs px-2 py-0.5 rounded-full; }
-  .badge-pending { @apply bg-q-700 text-earth-stone border border-q-600 text-xs px-2 py-0.5 rounded-full; }
-  .badge-intl    { @apply bg-purple-900/30 text-purple-300 border border-purple-700/30 text-xs px-2 py-0.5 rounded-full; }
+
+  /* ── Badges ── */
+  .badge-ok      { @apply bg-earth-sage/20    text-earth-sage   border border-earth-sage/40   text-[11px] px-2 py-0.5 rounded-full font-semibold; }
+  .badge-warn    { @apply bg-earth-amber/20   text-earth-amber  border border-earth-amber/40  text-[11px] px-2 py-0.5 rounded-full font-semibold; }
+  .badge-danger  { @apply bg-earth-terra/20   text-earth-terra  border border-earth-terra/40  text-[11px] px-2 py-0.5 rounded-full font-semibold; }
+  .badge-pending { @apply bg-q-700            text-earth-stone  border border-q-600           text-[11px] px-2 py-0.5 rounded-full font-semibold; }
+  .badge-intl    { @apply bg-purple-900/30    text-purple-300   border border-purple-700/40   text-[11px] px-2 py-0.5 rounded-full font-semibold; }
+
+  /* ── Typography helpers ── */
+  .page-title {
+    @apply font-display text-xl tracking-[0.12em] text-earth-cream font-semibold;
+  }
+  .section-title {
+    @apply text-xs font-bold uppercase tracking-widest text-earth-stone;
+  }
+  .stat-value {
+    @apply text-2xl font-bold;
+  }
+}
+
+/* Mobile safe area (iPhone notch) */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Better touch targets on mobile */
+@media (max-width: 640px) {
+  .input { font-size: 16px; } /* prevents iOS zoom on focus */
 }

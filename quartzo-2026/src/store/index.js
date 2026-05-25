@@ -177,8 +177,8 @@ const useStore = create(
         set(s => ({ drivers: s.drivers.filter(d => d.id !== id) }))
       },
 
-      // ── alerts ────────────────────────────────────────────────────────────
-      get alerts() { return runAllAlerts(get().artists) },
+      // ── alerts (computed on access, safe with Zustand persist) ────────────
+      getAlerts() { return runAllAlerts(get().artists) },
 
       // ── excel import ──────────────────────────────────────────────────────
       importResult: null,

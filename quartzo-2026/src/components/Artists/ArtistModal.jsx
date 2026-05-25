@@ -69,8 +69,8 @@ export default function ArtistModal({ open, onClose, artist }) {
   const { lang, updateArtist, addIncident, currentUser, alerts } = useStore(s => ({
     lang: s.lang, updateArtist: s.updateArtist,
     addIncident: s.addIncident, currentUser: s.currentUser,
-    alerts: s.alerts,
   }))
+  const alerts = useStore(s => s.getAlerts())
   const { t } = useI18n(lang)
   const isAdmin = currentUser?.role === 'admin'
 
